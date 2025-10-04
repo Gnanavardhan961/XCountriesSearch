@@ -48,22 +48,20 @@ function App() {
         className="search-input"
       />
 
-      {loading ? (
-        <p>Loading countries...</p>
-      ) : (
-        <div className="countries-grid">
-          {filteredCountries.map((country, idx) => (
-            <div key={idx} className="countryCard">
-              <img
-                src={country.flag}
-                alt={`Flag of ${country.name}`}
-                className="flag"
-              />
-              <p className="country-name">{country.name}</p>
-            </div>
-          ))}
-        </div>
-      )}
+      {loading && <p>Loading countries...</p>}
+
+      <div className="countries-grid">
+        {filteredCountries.map((country, idx) => (
+          <div key={idx} className="countryCard">
+            <img
+              src={country.flag}
+              alt={`Flag of ${country.name}`}
+              className="flag"
+            />
+            <p className="country-name">{country.name}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
