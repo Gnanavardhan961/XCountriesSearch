@@ -6,6 +6,7 @@ function App() {
   const [filtered, setFiltered] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -19,8 +20,8 @@ function App() {
 
         const data = await response.json();
         const formatted = data.map((c) => ({
-          name: c.name?.common || c.name || "Unknown",
-          flag: c.flags?.png || null,
+          common: c.common || c.name?.common || c.name || "Unknown",
+          png: c.png || c.flags?.png || c.flag || null,
         }));
 
         setCountries(formatted);
@@ -28,6 +29,8 @@ function App() {
       } catch (err) {
         console.error("Error fetching countries:", err);
         setError(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -36,7 +39,7 @@ function App() {
 
   useEffect(() => {
     const results = countries.filter((country) =>
-      country.name.toLowerCase().includes(searchTerm.toLowerCase())
+      country.common.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFiltered(results);
   }, [searchTerm, countries]);
@@ -51,7 +54,9 @@ function App() {
         className="searchBar"
       />
 
-      {error ? (
+      {loading ? (
+        <p className="loading">Loading countries...</p>
+      ) : error ? (
         <p className="error">Failed to load countries. Please try again.</p>
       ) : filtered.length === 0 ? (
         <p className="noResults">No countries found.</p>
@@ -59,12 +64,12 @@ function App() {
         <div className="countriesGrid">
           {filtered.map((country, index) => (
             <div className="countryCard" key={index}>
-              {country.flag ? ( // ✅ render only if flag is valid
-                <img src={country.flag} alt={`${country.name} flag`} />
+              {country.png ? (
+                <img src={country.png} alt={`${country.common} flag`} />
               ) : (
                 <div className="noFlag">No flag available</div>
               )}
-              <p>{country.name}</p>
+              <p>{country.common}</p>
             </div>
           ))}
         </div>
